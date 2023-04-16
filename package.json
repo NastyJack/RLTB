@@ -1,0 +1,17 @@
+{
+  "name": "rltb",
+  "version": "1.0.0",
+  "description": "A rocket league garage auto trade bumper",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "SET NODE_ENV=PRODUCTION&&nodemon"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
+    "puppeteer": "^15.3.0"
+  }
+}
