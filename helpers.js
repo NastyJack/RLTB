@@ -34,24 +34,9 @@ let setup = {
 
 async function clickIAccept(page) {
   try {
-    // await page.waitForSelector('button[#"acceptPrivacyPolicy"]');
-    // await page.waitForSelector("button[#acceptPrivacyPolicy]");
-    // await document.querySelector("#acceptPrivacyPolicy").click();
-
     await page.evaluate(() => {
       document.querySelector("#acceptPrivacyPolicy").click();
     });
-
-    // await page.click('[id="acceptPrivacyPolicy"]');
-
-    // console.log("\n > Clicked I Accept...");
-
-    // await page.click('button[name="I Accept"]');
-
-    // const [iAcceptButton] = await page.$x("//button[contains(., 'I Accept')]");
-    // acceptPrivacyPolicy;
-    // console.log("iAcceptButton", iAcceptButton);
-    // if (iAcceptButton) for (let i = 0; i < 10; i++) await iAcceptButton.click();
 
     console.log("\n > Clicked I Accept...");
   } catch (e) {
@@ -116,7 +101,7 @@ async function performBumping(page) {
 
         console.log("bumpButton", bumpButton);
         if (!bumpButton.length) throw new Error("End of trades");
-        // await bumpButton[0].click();
+        await bumpButton[0].click();
         await page.waitForTimeout(3 * 1000);
         await page.keyboard.press("Escape");
         for (let j = 0; j < 11; j++) await page.keyboard.press("ArrowDown");
