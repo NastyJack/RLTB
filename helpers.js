@@ -13,6 +13,9 @@ let setup = {
           "--no-sandbox",
           "--disable-setuid-sandbox",
           "--disable-site-isolation-trials",
+          "--disable-background-timer-throttling",
+          "--disable-backgrounding-occluded-windows",
+          "--disable-renderer-backgrounding",
         ],
       });
     page = await browser.newPage();
@@ -23,11 +26,8 @@ let setup = {
 
       await clickIAccept(page);
       await doLogin(page);
-      await waitForMyTradesPage(page);
-
       await performBumping(page, 1);
 
-      // await browser.close();
       return true;
     } catch (e) {
       await browser.close();
@@ -63,27 +63,11 @@ async function doLogin(page) {
     });
 
     await page.click("input[name=submit]");
-
     await page.waitForTimeout(10 * 1000);
     await page.goto(process.env.RLG_USER_URL);
-  } catch (e) {
-    console.log("Failed at doLogin", e);
-  }
-}
-
-async function waitForMyTradesPage(page) {
-  try {
-    let buttonToClick,
-      i = 1;
-
-    buttonToClick = await page.$x(
-      `/html/body/main/section/div/div[3]/div[2]/div/div[4]/div[${i}]/div[2]/button`
-    );
-
-    // console.log("Found Bump Button", buttonToClick);
     console.log("\n > At My Trades Page...");
   } catch (e) {
-    console.log("Failed at waitForMyTradesPage", e);
+    console.log("Failed at doLogin", e);
   }
 }
 

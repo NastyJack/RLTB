@@ -8,7 +8,7 @@
     "test": "SET NODE_ENV=TEST&&nodemon",
     "build": "pkg app.js -t node16-win-x64 -o RLTB --public"
   },
-  "author": "",
+  "author": "Nasty_Jack",
   "license": "ISC",
   "dependencies": {
     "dotenv": "^16.0.1",
