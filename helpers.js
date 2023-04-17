@@ -1,10 +1,14 @@
 let puppeteer = require("puppeteer");
+let keyDown1 = 0,
+  keyDown2 = 0;
 
 let setup = {
   Puppeteer: async function () {
     let page,
       browser = await puppeteer.launch({
         headless: false,
+        executablePath:
+          "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
         args: [
           "--no-sandbox",
           "--disable-setuid-sandbox",
@@ -20,7 +24,8 @@ let setup = {
       await clickIAccept(page);
       await doLogin(page);
       await waitForMyTradesPage(page);
-      await performBumping(page);
+
+      await performBumping(page, 1);
 
       // await browser.close();
       return true;
@@ -75,7 +80,7 @@ async function waitForMyTradesPage(page) {
       `/html/body/main/section/div/div[3]/div[2]/div/div[4]/div[${i}]/div[2]/button`
     );
 
-    console.log("Found Bump Button", buttonToClick);
+    // console.log("Found Bump Button", buttonToClick);
     console.log("\n > At My Trades Page...");
   } catch (e) {
     console.log("Failed at waitForMyTradesPage", e);
@@ -84,35 +89,60 @@ async function waitForMyTradesPage(page) {
 
 async function performBumping(page) {
   try {
-    await page.evaluate(() => {
-      window.scroll(0, 0);
-    });
-    for (let i = 0; i < 44; i++) await page.keyboard.press("ArrowDown");
-    console.log("\n > Bumping Trades...");
+    keyDown1 = 0;
+    for (; keyDown1 < 44; keyDown1++) await page.keyboard.press("ArrowDown");
+    console.log("\n > Bumping Trades...", keyDown1);
 
-    for (let i = 1; i > 0; i++) {
+    for (let tradeCounter = 1; tradeCounter > 0; tradeCounter++) {
       try {
         let timeout = generateRandomNumbers();
-        console.log("\n > Bumping in", timeout, "seconds");
+        console.log(
+          "\n > Bumping trade:",
+          tradeCounter,
+          "in",
+          timeout,
+          "seconds"
+        );
         await page.waitForTimeout(timeout * 1000);
         let bumpButton = await page.$x(
-          `/html/body/main/section/div/div[3]/div[2]/div/div[4]/div[${i}]/div[2]/button`
+          `/html/body/main/section/div/div[3]/div[2]/div/div[4]/div[${tradeCounter}]/div[2]/button`
         );
 
-        console.log("bumpButton", bumpButton);
+        // console.log("bumpButton", bumpButton);
         if (!bumpButton.length) throw new Error("End of trades");
-        await bumpButton[0].click();
+
+        if (
+          process.env.NODE_ENV &&
+          process.env.NODE_ENV.trim() === "PRODUCTION"
+        )
+          await bumpButton[0].click();
+
         await page.waitForTimeout(3 * 1000);
         await page.keyboard.press("Escape");
-        for (let j = 0; j < 11; j++) await page.keyboard.press("ArrowDown");
+
+        keyDown2 = 0;
+        for (; keyDown2 < 11; keyDown2++)
+          await page.keyboard.press("ArrowDown");
       } catch (e) {
         let waiting = generateRandomNumbers(16 * 60, 18 * 60);
-        console.log("\n > End of Trades");
+        console.log(
+          "\n > End of Trades, total bumped trades =",
+          tradeCounter - 1
+        );
         console.log(`\n > Waiting for ${waiting / 60} minutes...`);
-
         await page.reload();
         await page.waitForTimeout(waiting * 1000);
-        performBumping(page);
+        await page.evaluate(() => {
+          window.scroll(0, 0);
+        });
+        await page.waitForTimeout(3 * 1000);
+
+        keyDown1 = 0;
+        for (; keyDown1 < 44; keyDown1++)
+          await page.keyboard.press("ArrowDown");
+
+        //restart for loop all over again
+        tradeCounter = 0;
       }
     }
 
